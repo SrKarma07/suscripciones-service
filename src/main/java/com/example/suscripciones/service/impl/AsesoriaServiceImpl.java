@@ -38,7 +38,7 @@ public class AsesoriaServiceImpl implements AsesoriaService {
             throw new RuntimeException("La suscripción ha caducado y no puede realizarse la asesoría.");
         }
 
-        // 3. Verificamos si hay saldo suficiente para la asesoría
+        // 3. Verificamos si hay saldo suficiente para la asesoría (saldo <= 0)
         if (suscripcion.getSaldoAsesorias() <= 0) {
             throw new RuntimeException("Saldo no disponible para realizar la asesoría.");
         }
