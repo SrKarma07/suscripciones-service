@@ -5,6 +5,8 @@ import com.example.suscripciones.entity.Suscripcion;
 import com.example.suscripciones.repository.AsesoriaRepository;
 import com.example.suscripciones.repository.SuscripcionRepository;
 import com.example.suscripciones.service.AsesoriaService;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -17,7 +19,6 @@ public class AsesoriaServiceImpl implements AsesoriaService {
     private final AsesoriaRepository asesoriaRepository;
     private final SuscripcionRepository suscripcionRepository;
 
-    // Inyectamos el repositorio
     public AsesoriaServiceImpl(AsesoriaRepository asesoriaRepository, SuscripcionRepository suscripcionRepository) {
         this.asesoriaRepository = asesoriaRepository;
         this.suscripcionRepository = suscripcionRepository;
@@ -30,17 +31,17 @@ public class AsesoriaServiceImpl implements AsesoriaService {
 
         // Verificamos que la suscripción existe
         Suscripcion suscripcion = suscripcionRepository.findById(numeroSuscripcion)
-                .orElseThrow(() -> new RuntimeException("No existe la suscripción con ID: " + numeroSuscripcion));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No existe la suscripción con ID: " + numeroSuscripcion));
 
         // 2. Verificamos si la suscripción está activa y no ha caducado
         LocalDate fechaActual = LocalDate.now();
         if (suscripcion.getFechaCaducidad().isBefore(fechaActual)) {
-            throw new RuntimeException("La suscripción ha caducado y no puede realizarse la asesoría.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La suscripción ha caducado y no puede realizarse la asesoría.");
         }
 
-        // 3. Verificamos si hay saldo suficiente para la asesoría (saldo <= 0)
-        if (suscripcion.getSaldoAsesorias() <= 0) {
-            throw new RuntimeException("Saldo no disponible para realizar la asesoría.");
+        // 3. Verificamos si hay saldo suficiente para la asesoría
+        if (suscripcion.getSaldoAsesorias() < asesoria.getCantidad()) {  // Aquí está la validación para que no se agote el saldo
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Saldo no disponible para realizar la asesoría.");
         }
 
         // 4. Decrementar el saldo de asesorías de la suscripción
@@ -60,11 +61,12 @@ public class AsesoriaServiceImpl implements AsesoriaService {
 
 
 
+
     @Override
     public Asesoria getAsesoriaById(Long id) {
         Optional<Asesoria> optional = asesoriaRepository.findById(id);
         if (optional.isEmpty()) {
-            throw new RuntimeException("No existe la asesoría con ID: " + id);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe la asesoría con ID: " + id);
         }
         return optional.get();
     }
@@ -76,7 +78,6 @@ public class AsesoriaServiceImpl implements AsesoriaService {
 
     @Override
     public Asesoria updateAsesoria(Long id, Asesoria asesoria) {
-        // Verificamos existencia
         Asesoria existente = getAsesoriaById(id);
 
         // Actualizamos los campos
@@ -95,7 +96,7 @@ public class AsesoriaServiceImpl implements AsesoriaService {
     @Override
     public void deleteAsesoria(Long id) {
         if (!asesoriaRepository.existsById(id)) {
-            throw new RuntimeException("No existe la asesoría con ID: " + id);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe la asesoría con ID: " + id);
         }
         asesoriaRepository.deleteById(id);
     }

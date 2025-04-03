@@ -5,6 +5,7 @@ import com.example.suscripciones.service.AsesoriaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -14,7 +15,6 @@ public class AsesoriaController {
 
     private final AsesoriaService asesoriaService;
 
-    // Inyectamos el servicio vía constructor
     public AsesoriaController(AsesoriaService asesoriaService) {
         this.asesoriaService = asesoriaService;
     }
@@ -55,8 +55,8 @@ public class AsesoriaController {
     }
 
     // Manejar errores de la creación de asesorías
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<String> handleResponseStatusException(ResponseStatusException ex) {
+        return new ResponseEntity<>(ex.getReason(), ex.getStatusCode());
     }
 }
