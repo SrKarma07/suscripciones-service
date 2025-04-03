@@ -5,6 +5,7 @@ import com.example.suscripciones.service.SuscripcionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -46,5 +47,11 @@ public class SuscripcionController {
     public ResponseEntity<Void> delete(@PathVariable("id") String id) {
         suscripcionService.deleteSuscripcion(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // Manejo de excepciones
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<String> handleResponseStatusException(ResponseStatusException ex) {
+        return new ResponseEntity<>(ex.getReason(), ex.getStatusCode());
     }
 }
