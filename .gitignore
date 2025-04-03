@@ -31,3 +31,12 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+# Evitar archivos innecesarios de Maven Wrapper
+mvnw
+mvnw.cmd
+.mvn/wrapper/maven-wrapper.properties
+
+# Evitar archivos de configuraciÃ³n sensibles
+src/main/resources/application.properties
