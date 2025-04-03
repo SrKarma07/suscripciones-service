@@ -1,5 +1,6 @@
 package com.example.suscripciones.repository;
 
+import com.example.suscripciones.entity.Asesoria;
 import com.example.suscripciones.entity.Suscripcion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -30,13 +31,6 @@ public interface SuscripcionRepository extends JpaRepository<Suscripcion, String
      * Encuentra todas las suscripciones cuya fecha de caducidad esté entre
      * un rango (startDate y endDate), si lo requieres.
      */
-    List<Suscripcion> findAllByFechaCaducidadBetween(LocalDate startDate, LocalDate endDate);
 
-    // Naturalmente, también tienes todos los métodos CRUD de JpaRepository:
-    //  - findById(String numeroSuscripcion)
-    //  - findAll()
-    //  - save(Suscripcion s)
-    //  - deleteById(String numeroSuscripcion)
-    //  etc.
-
+    List<Suscripcion> findAllByClienteIdAndFechaCaducidadBetween(String clienteId, LocalDate fechaInicio, LocalDate fechaFin);
 }

@@ -50,4 +50,8 @@ public interface AsesoriaRepository extends JpaRepository<Asesoria, Long> {
     @Query("DELETE FROM Asesoria a WHERE a.suscripcion.numeroSuscripcion = :numeroSuscripcion")
     void deleteBySuscripcion(String numeroSuscripcion);
 
+    List<Asesoria> findAllByFechaBetweenAndSuscripcion_NumeroSuscripcion(LocalDate fechaInicio, LocalDate fechaFin, String numeroSuscripcion);
+
+    // Busca todas las asesorías dentro de un rango de fechas y de una suscripción específica
+
 }
